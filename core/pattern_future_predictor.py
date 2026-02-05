@@ -12,10 +12,24 @@ from typing import Dict, List, Tuple, Optional
 import logging
 from dataclasses import dataclass
 import json
+import sys
+import os
+
+# 添加父目录到路径，以便导入 metatrader_tools
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 # 导入数据管理器和形态匹配器
 from silver_data_manager import DataManager
-from real_pattern_visualizer import RealPatternMatcher, PatternMatch
+try:
+    from real_pattern_visualizer import RealPatternMatcher, PatternMatch
+except ImportError:
+    # 如果导入失败，创建简单的替代类
+    class PatternMatch:
+        def __init__(self, symbol, timeframe, similarity_score, match_method):
+            self.symbol = symbol
+            self.timeframe = timeframe
+            self.similarity_score = similarity_score
+            self.match_method = match_method
 
 # 设置中文字体
 plt.rcParams['font.sans-serif'] = ['SimHei', 'Microsoft YaHei', 'Arial Unicode MS']
