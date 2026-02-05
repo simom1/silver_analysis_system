@@ -22,7 +22,7 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 # 导入数据管理器
-from silver_data_manager import DataManager
+from .silver_data_manager import DataManager
 
 # 设置日志
 logging.basicConfig(level=logging.INFO)

@@ -19,7 +19,7 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 # 导入数据管理器和形态匹配器
-from silver_data_manager import DataManager
+from .silver_data_manager import DataManager
 try:
     from real_pattern_visualizer import RealPatternMatcher, PatternMatch
 except ImportError:
