@@ -1,58 +1,70 @@
-# Python
+# 敏感信息文件
+*.env
+*.key
+*.pem
+config.json
+secrets.json
+credentials.json
+
+# API密钥和令牌
+*api_key*
+*token*
+*secret*
+*password*
+
+# 数据库文件
+*.db
+*.sqlite
+*.sqlite3
+
+# 日志文件
+*.log
+logs/
+
+# 缓存文件
 __pycache__/
-*.py[cod]
-*$py.class
-*.so
+*.pyc
+*.pyo
+*.pyd
 .Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
+*.so
 
-# Virtual Environment
-venv/
-ENV/
-env/
+# 临时文件
+*.tmp
+*.temp
+temp/
+tmp/
 
-# IDE
-.vscode/
+# 系统文件
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE文件
+.vscode/settings.json
 .idea/
 *.swp
 *.swo
-*~
 
-# OS
-.DS_Store
-Thumbs.db
+# 个人配置文件
+personal_config.py
+my_config.py
+local_settings.py
 
-# Logs
-*.log
+# MT5相关敏感文件
+mt5_credentials.json
+trading_config.json
+account_info.json
 
-# Database
-*.db
-*.sqlite
+# 市场数据（如果包含敏感信息）
+market_data/sensitive/
+private_data/
 
-# Temporary files
-*.tmp
+# 备份文件
 *.bak
-*.cache
+*.backup
+backup/
 
-# Output files (optional - uncomment if you don't want to track outputs)
-# outputs/*.png
-# outputs/*.json
-# outputs/*.txt
-
-# Market data cache (optional - uncomment if data is too large)
-# market_data/raw_data/*.csv
-# market_data/raw_data/*.json
+# 测试文件中的敏感数据
+test_credentials.py
+test_config.json
