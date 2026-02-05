@@ -8,6 +8,11 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 import logging
+import sys
+import os
+
+# 添加父目录到路径，以便导入 metatrader_tools
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 # 导入MT5客户端
 from metatrader_tools.mt5_client.client import MT5Client

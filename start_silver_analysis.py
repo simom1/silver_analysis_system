@@ -11,10 +11,12 @@ import logging
 
 # 添加当前目录到路径
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+# 添加父目录到路径，以便导入 metatrader_tools
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 try:
-    from silver_data_manager import DataManager
-    from silver_correlation_analyzer import SilverCorrelationAnalyzer
+    from core.silver_data_manager import DataManager
+    from core.silver_correlation_analyzer import SilverCorrelationAnalyzer
 except ImportError as e:
     print(f"❌ 导入模块失败: {e}")
     print("请确保所有必要的文件都在同一目录下")

@@ -15,6 +15,11 @@ from typing import Dict, List, Tuple, Optional
 import logging
 from dataclasses import dataclass
 import json
+import sys
+import os
+
+# 添加父目录到路径，以便导入 metatrader_tools
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 # 导入数据管理器
 from silver_data_manager import DataManager
