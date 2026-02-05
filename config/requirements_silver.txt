@@ -1,0 +1,21 @@
+# 白银相关性分析工具依赖包
+
+# 核心依赖
+pandas>=1.3.0          # 数据处理和分析
+numpy>=1.20.0          # 数值计算
+MetaTrader5>=5.0.0     # MT5连接 (Windows only)
+
+# 可选依赖 (用于更精确的统计分析)
+scipy>=1.7.0           # 科学计算，用于计算p值
+
+# 系统依赖
+pathlib               # 路径处理 (Python 3.4+内置)
+datetime              # 时间处理 (内置)
+json                  # JSON处理 (内置)
+logging               # 日志记录 (内置)
+pickle                # 数据序列化 (内置)
+
+# 注意事项:
+# 1. MetaTrader5包只能在Windows系统上安装和使用
+# 2. 需要安装并运行MT5终端
+# 3. 建议使用Python 3.7或更高版本

@@ -1,0 +1,76 @@
+{
+  "silver_config": {
+    "symbol": "XAGUSD",
+    "timeframe": "H4",
+    "bars_count": 50,
+    "description": "白银4小时图，分析最后50根K线 - 检测标的保持不变"
+  },
+  
+  "target_symbols": {
+    "XAUUSD": {
+      "name": "黄金",
+      "timeframes": ["H1", "H4"],
+      "description": "黄金1小时和4小时图"
+    },
+    "XTIUSD": {
+      "name": "WTI原油",
+      "timeframes": ["H1", "H4"],
+      "description": "WTI原油1小时和4小时图"
+    },
+    "XBRUSD": {
+      "name": "布伦特原油",
+      "timeframes": ["H1", "H4"],
+      "description": "布伦特原油1小时和4小时图"
+    },
+    "US500": {
+      "name": "标普500",
+      "timeframes": ["H1", "H4"],
+      "description": "标普500指数1小时和4小时图"
+    },
+    "US30": {
+      "name": "道琼斯",
+      "timeframes": ["H1", "H4"],
+      "description": "道琼斯指数1小时和4小时图"
+    },
+    "NAS100": {
+      "name": "纳斯达克100",
+      "timeframes": ["H1", "H4"],
+      "description": "纳斯达克100指数1小时和4小时图"
+    },
+    "EURUSD": {
+      "name": "欧元美元",
+      "timeframes": ["H1", "H4"],
+      "description": "欧元美元1小时和4小时图"
+    },
+    "GBPUSD": {
+      "name": "英镑美元",
+      "timeframes": ["H1", "H4"],
+      "description": "英镑美元1小时和4小时图"
+    }
+  },
+  
+  "analysis_settings": {
+    "min_data_points": 50,
+    "correlation_thresholds": {
+      "strong": 0.7,
+      "moderate": 0.5,
+      "weak": 0.3
+    },
+    "max_bars_to_fetch": 5000,
+    "save_results": true,
+    "results_filename": "silver_correlation_results.json"
+  },
+  
+  "display_settings": {
+    "show_top_n": 15,
+    "show_p_values": true,
+    "show_trading_suggestions": true,
+    "decimal_places": 4
+  },
+  
+  "mt5_settings": {
+    "auto_connect": true,
+    "timeout_seconds": 30,
+    "retry_attempts": 3
+  }
+}
