@@ -190,7 +190,7 @@ class DataManager:
         Args:
             symbol: 品种代码
             timeframe: 时间框架
-            count: 获取的K线数量
+            count: 获取的K线数量（最小需要）
             force_refresh: 强制刷新数据
             max_age_hours: 数据最大年龄（小时）
             
@@ -215,7 +215,23 @@ class DataManager:
         else:
             # 数据新鲜，直接从本地加载
             logger.info(f"从本地加载 {symbol} {timeframe} 数据")
-            return self.load_data_from_csv(symbol, timeframe)
+            data = self.load_data_from_csv(symbol, timeframe)
+            
+            # 检查数据量是否足够
+            if data is not None and len(data) < count:
+                logger.warning(f"{symbol} {timeframe} 本地数据只有 {len(data)} 根，少于需要的 {count} 根")
+                logger.info(f"尝试从MT5获取更多数据...")
+                
+                # 尝试从MT5获取更多数据
+                new_data = self.fetch_from_mt5(symbol, timeframe, count)
+                if new_data is not None and len(new_data) > len(data):
+                    logger.info(f"成功获取 {len(new_data)} 根K线")
+                    self.save_data_to_csv(new_data, symbol, timeframe)
+                    return new_data
+                else:
+                    logger.warning(f"无法获取更多数据，使用现有的 {len(data)} 根K线")
+            
+            return data
     
     def batch_update_data(self, symbols_config: Dict[str, List[str]], count: int = 5000) -> Dict[str, Dict[str, bool]]:
         """

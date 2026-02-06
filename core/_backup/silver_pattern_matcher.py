@@ -18,8 +18,11 @@ import os
 # 添加父目录到路径，以便导入 metatrader_tools
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-# 导入数据管理器
-from .silver_data_manager import DataManager
+# 导入数据管理器 - 支持直接运行和模块导入
+try:
+    from .silver_data_manager import DataManager
+except ImportError:
+    from silver_data_manager import DataManager
 
 # 设置日志
 logging.basicConfig(level=logging.INFO)
@@ -281,6 +284,11 @@ class SilverPatternMatcher:
         """
         运行形态匹配分析
         
+        核心逻辑：
+        1. 获取白银(XAGUSD) 4H周期的最新50根K线作为基准形态
+        2. 在其他品种的历史数据中，用50根K线的滑动窗口搜索相似形态
+        3. 返回相似度最高的前N个匹配结果
+        
         Args:
             top_n: 返回前N个最相似的形态
             min_similarity: 最小相似性阈值
@@ -292,13 +300,20 @@ class SilverPatternMatcher:
         
         # 获取白银基准形态
         logger.info(f"获取白银基准形态: {self.silver_symbol} {self.silver_timeframe} 最后{self.silver_bars}根K线")
-        silver_data = self.data_manager.get_data(
+        silver_data_full = self.data_manager.get_data(
             self.silver_symbol, 
             self.silver_timeframe, 
             count=self.silver_bars
         )
         
-        if silver_data is None or len(silver_data) < self.silver_bars:
+        if silver_data_full is None or len(silver_data_full) < self.silver_bars:
+            logger.error("无法获取白银基准数据")
+            return []
+        
+        # 重要：只取最后50根K线作为基准
+        silver_data = silver_data_full.iloc[-self.silver_bars:]
+        
+        if len(silver_data) < self.silver_bars:
             logger.error("无法获取白银基准数据")
             return []
         
@@ -314,14 +329,24 @@ class SilverPatternMatcher:
                 try:
                     logger.info(f"搜索 {symbol} {timeframe} 中的相似形态...")
                     
-                    # 获取目标品种数据
+                    # 获取目标品种数据（获取足够多的历史数据用于滑动窗口搜索）
                     target_data = self.data_manager.get_data(symbol, timeframe, count=5000)
                     
                     if target_data is None:
                         logger.warning(f"无法获取 {symbol} {timeframe} 数据")
                         continue
                     
-                    # 寻找相似形态
+                    # 特殊处理：如果是白银自己，排除最新的50根K线，避免匹配到自己
+                    if symbol == self.silver_symbol and timeframe == self.silver_timeframe:
+                        if len(target_data) > self.silver_bars:
+                            # 只搜索历史数据，排除最新的50根
+                            target_data = target_data.iloc[:-self.silver_bars]
+                            logger.info(f"排除白银最新 {self.silver_bars} 根K线，避免自我匹配")
+                        else:
+                            logger.info(f"白银历史数据不足，跳过")
+                            continue
+                    
+                    # 在历史数据中用50根K线的滑动窗口寻找相似形态
                     matches = self.find_similar_patterns(
                         target_data, silver_pattern, symbol, timeframe, self.silver_bars
                     )
@@ -408,8 +433,15 @@ class SilverPatternMatcher:
             matches: 形态匹配结果列表
             filename: 保存文件名
         """
+        # 确保 outputs 目录存在
+        output_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'outputs')
+        os.makedirs(output_dir, exist_ok=True)
+        
         if not filename:
             filename = f"silver_pattern_matches_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+        
+        # 使用完整路径
+        filepath = os.path.join(output_dir, filename)
         
         try:
             data = {
@@ -435,11 +467,11 @@ class SilverPatternMatcher:
                     "pattern_length": match.pattern_length
                 })
             
-            with open(filename, 'w', encoding='utf-8') as f:
+            with open(filepath, 'w', encoding='utf-8') as f:
                 json.dump(data, f, indent=2, ensure_ascii=False)
             
-            logger.info(f"形态匹配结果已保存到: {filename}")
-            print(f"💾 结果已保存到: {filename}")
+            logger.info(f"形态匹配结果已保存到: {filepath}")
+            print(f"💾 结果已保存到: {filepath}")
             
         except Exception as e:
             logger.error(f"保存结果失败: {e}")

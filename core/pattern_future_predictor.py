@@ -14,22 +14,25 @@ from dataclasses import dataclass
 import json
 import sys
 import os
+import warnings
 
-# 添加父目录到路径，以便导入 metatrader_tools
+# 过滤numpy的警告
+warnings.filterwarnings('ignore', category=RuntimeWarning, module='numpy')
+
+# 添加父目录到路径
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-# 导入数据管理器和形态匹配器
-from .silver_data_manager import DataManager
+# 导入数据管理器 - 支持直接运行和模块导入
 try:
-    from real_pattern_visualizer import RealPatternMatcher, PatternMatch
+    from .silver_data_manager import DataManager
 except ImportError:
-    # 如果导入失败，创建简单的替代类
-    class PatternMatch:
-        def __init__(self, symbol, timeframe, similarity_score, match_method):
-            self.symbol = symbol
-            self.timeframe = timeframe
-            self.similarity_score = similarity_score
-            self.match_method = match_method
+    from silver_data_manager import DataManager
+
+# 导入改进版形态匹配器
+try:
+    from .improved_pattern_matcher import ImprovedPatternMatcher, PatternMatch
+except ImportError:
+    from improved_pattern_matcher import ImprovedPatternMatcher, PatternMatch
 
 # 设置中文字体
 plt.rcParams['font.sans-serif'] = ['SimHei', 'Microsoft YaHei', 'Arial Unicode MS']
@@ -59,7 +62,7 @@ class PatternFuturePredictor:
     
     def __init__(self, data_dir: str = "market_data"):
         self.data_manager = DataManager(data_dir)
-        self.pattern_matcher = RealPatternMatcher(data_dir)
+        self.pattern_matcher = ImprovedPatternMatcher(data_dir)
         
         # 预测参数
         self.prediction_bars = 20  # 预测未来20根K线
@@ -117,8 +120,16 @@ class PatternFuturePredictor:
         if future_data is None or len(future_data) == 0:
             return None
         
+        # 重新获取匹配形态的数据
+        full_data = self.data_manager.get_data(match.symbol, match.timeframe, count=5000)
+        if full_data is None:
+            return None
+        
+        # 提取匹配形态的数据
+        match_data = full_data.iloc[match.start_index:match.end_index + 1]
+        
         # 标准化未来价格（相对于匹配结束时的价格）
-        start_price = match.pattern_data['close'].iloc[-1]  # 匹配形态的最后一个价格
+        start_price = match_data['close'].iloc[-1]  # 匹配形态的最后一个价格
         future_prices = future_data['close']
         future_pattern = ((future_prices - start_price) / start_price * 100).values
         
@@ -273,10 +284,16 @@ class PatternFuturePredictor:
             
             ax = axes[row, col]
             
-            # 绘制匹配的历史形态
-            match_pattern = self.pattern_matcher.normalize_price_series(prediction.match.pattern_data['close'])
+            # 重新获取匹配形态的数据
+            full_data = self.data_manager.get_data(prediction.match.symbol, prediction.match.timeframe, count=5000)
+            if full_data is None:
+                continue
+            match_data = full_data.iloc[prediction.match.start_index:prediction.match.end_index + 1]
+            
+            # 绘制匹配的历史形态（使用Z-score标准化）
+            match_pattern = self.pattern_matcher.normalize_pattern_zscore(match_data['close'])
             match_x = range(len(match_pattern))
-            ax.plot(match_x, match_pattern, 'b-', linewidth=2, alpha=0.7, label='历史匹配形态', marker='o', markersize=3)
+            ax.plot(match_x, match_pattern.values, 'b-', linewidth=2, alpha=0.7, label='历史匹配形态', marker='o', markersize=3)
             
             # 绘制后续走势
             future_x = range(len(match_pattern), len(match_pattern) + len(prediction.future_pattern))
@@ -316,10 +333,17 @@ class PatternFuturePredictor:
         
         plt.tight_layout()
         
+        # 确保 outputs 目录存在
+        output_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'outputs')
+        os.makedirs(output_dir, exist_ok=True)
+        
         # 保存图表
         if not save_path:
             timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-            save_path = f"silver_future_prediction_{timestamp}.png"
+            save_path = os.path.join(output_dir, f"silver_future_prediction_{timestamp}.png")
+        elif not os.path.isabs(save_path):
+            # 如果是相对路径，保存到 outputs 目录
+            save_path = os.path.join(output_dir, save_path)
         
         plt.savefig(save_path, dpi=300, bbox_inches='tight')
         print(f"📊 未来走势预测图已保存: {save_path}")
@@ -346,8 +370,9 @@ class PatternFuturePredictor:
         report.append("🔮 白银未来走势预测报告")
         report.append("=" * 60)
         report.append(f"分析时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-        report.append(f"基于历史形态数量: {len(predictions)}")
-        report.append(f"预测K线数量: {self.prediction_bars}")
+        report.append(f"参考的相似历史形态数量: {len(predictions)} 个")
+        report.append(f"每个历史形态的K线数量: 50 根")
+        report.append(f"预测未来K线数量: {self.prediction_bars} 根")
         report.append("=" * 60)
         
         # 综合预测
@@ -450,17 +475,27 @@ class PatternFuturePredictor:
     
     def save_prediction_report(self, predictions: List[FuturePrediction], filename: Optional[str] = None):
         """保存预测报告"""
+        # 确保 outputs 目录存在
+        output_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'outputs')
+        os.makedirs(output_dir, exist_ok=True)
+        
         if not filename:
             timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
             filename = f"silver_prediction_report_{timestamp}.txt"
         
+        # 使用完整路径
+        if not os.path.isabs(filename):
+            filepath = os.path.join(output_dir, filename)
+        else:
+            filepath = filename
+        
         report = self.generate_prediction_report(predictions)
         
         try:
-            with open(filename, 'w', encoding='utf-8') as f:
+            with open(filepath, 'w', encoding='utf-8') as f:
                 f.write(report)
-            print(f"📄 预测报告已保存: {filename}")
-            return filename
+            print(f"📄 预测报告已保存: {filepath}")
+            return filepath
         except Exception as e:
             print(f"❌ 保存报告失败: {e}")
             return None

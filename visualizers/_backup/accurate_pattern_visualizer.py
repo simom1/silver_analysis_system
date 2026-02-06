@@ -11,6 +11,11 @@ import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
 import json
 from typing import Dict, List, Tuple, Optional
+import sys
+import os
+
+# 添加父目录到路径
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 # 导入MT5客户端
 from metatrader_tools.mt5_client.client import MT5Client
@@ -314,9 +319,13 @@ def create_accurate_comparison_chart():
     
     plt.tight_layout()
     
+    # 确保 outputs 目录存在
+    output_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'outputs')
+    os.makedirs(output_dir, exist_ok=True)
+    
     # 保存图表
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-    filename = f"accurate_pattern_comparison_{timestamp}.png"
+    filename = os.path.join(output_dir, f"accurate_pattern_comparison_{timestamp}.png")
     plt.savefig(filename, dpi=300, bbox_inches='tight')
     
     print(f"\n📊 精确形态对比图已生成:")
@@ -422,9 +431,13 @@ def create_single_accurate_comparison(symbol, timeframe, start_time, end_time, e
     
     plt.tight_layout()
     
+    # 确保 outputs 目录存在
+    output_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'outputs')
+    os.makedirs(output_dir, exist_ok=True)
+    
     # 保存
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-    filename = f"accurate_single_comparison_{symbol}_{timeframe}_{timestamp}.png"
+    filename = os.path.join(output_dir, f"accurate_single_comparison_{symbol}_{timeframe}_{timestamp}.png")
     plt.savefig(filename, dpi=300, bbox_inches='tight')
     
     print(f"✅ 精确对比图已保存: {filename}")

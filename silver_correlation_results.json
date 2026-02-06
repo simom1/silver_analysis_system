@@ -1,0 +1,152 @@
+{
+  "analysis_time": "2026-02-06T10:25:09.301688",
+  "silver_symbol": "XAGUSD",
+  "silver_timeframe": "H4",
+  "silver_bars": 50,
+  "results": [
+    {
+      "symbol": "XAUUSD",
+      "timeframe": "H4",
+      "correlation": 0.7770138830280467,
+      "p_value": 1.8290172184571594e-41,
+      "data_points": 199,
+      "start_time": "2025-12-19T04:00:00+00:00",
+      "end_time": "2026-02-06T04:00:00+00:00"
+    },
+    {
+      "symbol": "XAUUSD",
+      "timeframe": "H1",
+      "correlation": 0.41285562710870366,
+      "p_value": 0.005933689201615316,
+      "data_points": 43,
+      "start_time": "2026-01-26T16:00:00+00:00",
+      "end_time": "2026-02-06T04:00:00+00:00"
+    },
+    {
+      "symbol": "US500",
+      "timeframe": "H4",
+      "correlation": 0.38656082470789266,
+      "p_value": 1.8533641970152462e-08,
+      "data_points": 198,
+      "start_time": "2025-12-19T04:00:00+00:00",
+      "end_time": "2026-02-06T04:00:00+00:00"
+    },
+    {
+      "symbol": "NAS100",
+      "timeframe": "H4",
+      "correlation": 0.38286749299816425,
+      "p_value": 2.5932134722485864e-08,
+      "data_points": 198,
+      "start_time": "2025-12-19T04:00:00+00:00",
+      "end_time": "2026-02-06T04:00:00+00:00"
+    },
+    {
+      "symbol": "US500",
+      "timeframe": "H1",
+      "correlation": 0.3734427489693384,
+      "p_value": 0.013638968244312301,
+      "data_points": 43,
+      "start_time": "2026-01-26T16:00:00+00:00",
+      "end_time": "2026-02-06T04:00:00+00:00"
+    },
+    {
+      "symbol": "NAS100",
+      "timeframe": "H1",
+      "correlation": 0.37073494528448825,
+      "p_value": 0.014391109487228434,
+      "data_points": 43,
+      "start_time": "2026-01-26T16:00:00+00:00",
+      "end_time": "2026-02-06T04:00:00+00:00"
+    },
+    {
+      "symbol": "US30",
+      "timeframe": "H4",
+      "correlation": 0.3121963248280603,
+      "p_value": 7.548556079083289e-06,
+      "data_points": 198,
+      "start_time": "2025-12-19T04:00:00+00:00",
+      "end_time": "2026-02-06T04:00:00+00:00"
+    },
+    {
+      "symbol": "GBPUSD",
+      "timeframe": "H4",
+      "correlation": 0.27597069293628024,
+      "p_value": 7.966214463591643e-05,
+      "data_points": 199,
+      "start_time": "2025-12-19T04:00:00+00:00",
+      "end_time": "2026-02-06T04:00:00+00:00"
+    },
+    {
+      "symbol": "EURUSD",
+      "timeframe": "H4",
+      "correlation": 0.24827080233654325,
+      "p_value": 0.00040662143291342453,
+      "data_points": 199,
+      "start_time": "2025-12-19T04:00:00+00:00",
+      "end_time": "2026-02-06T04:00:00+00:00"
+    },
+    {
+      "symbol": "US30",
+      "timeframe": "H1",
+      "correlation": 0.23961119762926497,
+      "p_value": 0.12172402828941507,
+      "data_points": 43,
+      "start_time": "2026-01-26T16:00:00+00:00",
+      "end_time": "2026-02-06T04:00:00+00:00"
+    },
+    {
+      "symbol": "XBRUSD",
+      "timeframe": "H1",
+      "correlation": 0.21760317347447147,
+      "p_value": 0.13735120654890093,
+      "data_points": 48,
+      "start_time": "2026-01-23T16:00:00+00:00",
+      "end_time": "2026-02-06T04:00:00+00:00"
+    },
+    {
+      "symbol": "XTIUSD",
+      "timeframe": "H1",
+      "correlation": 0.19970108584294274,
+      "p_value": 0.1991706743710384,
+      "data_points": 43,
+      "start_time": "2026-01-26T16:00:00+00:00",
+      "end_time": "2026-02-06T04:00:00+00:00"
+    },
+    {
+      "symbol": "EURUSD",
+      "timeframe": "H1",
+      "correlation": 0.15256247292662978,
+      "p_value": 0.2901917111557419,
+      "data_points": 50,
+      "start_time": "2026-01-27T00:00:00+00:00",
+      "end_time": "2026-02-06T04:00:00+00:00"
+    },
+    {
+      "symbol": "XBRUSD",
+      "timeframe": "H4",
+      "correlation": 0.10222357713103954,
+      "p_value": 0.1539510186828936,
+      "data_points": 196,
+      "start_time": "2025-12-19T16:00:00+00:00",
+      "end_time": "2026-02-06T04:00:00+00:00"
+    },
+    {
+      "symbol": "XTIUSD",
+      "timeframe": "H4",
+      "correlation": 0.0924539246057138,
+      "p_value": 0.19861642441734814,
+      "data_points": 195,
+      "start_time": "2025-12-19T20:00:00+00:00",
+      "end_time": "2026-02-06T04:00:00+00:00"
+    },
+    {
+      "symbol": "GBPUSD",
+      "timeframe": "H1",
+      "correlation": 0.06860744503372394,
+      "p_value": 0.6359163360588074,
+      "data_points": 50,
+      "start_time": "2026-01-27T00:00:00+00:00",
+      "end_time": "2026-02-06T04:00:00+00:00"
+    }
+  ]
+}

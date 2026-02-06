@@ -21,8 +21,11 @@ import os
 # 添加父目录到路径，以便导入 metatrader_tools
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-# 导入数据管理器
-from .silver_data_manager import DataManager
+# 导入数据管理器 - 支持直接运行和模块导入
+try:
+    from .silver_data_manager import DataManager
+except ImportError:
+    from silver_data_manager import DataManager
 
 # 设置日志
 logging.basicConfig(level=logging.INFO)
@@ -353,6 +356,16 @@ class SilverCorrelationAnalyzer:
             results: 相关性结果列表
             filename: 保存的文件名
         """
+        # 确保 outputs 目录存在
+        output_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'outputs')
+        os.makedirs(output_dir, exist_ok=True)
+        
+        # 使用完整路径
+        if not os.path.isabs(filename):
+            filepath = os.path.join(output_dir, filename)
+        else:
+            filepath = filename
+        
         try:
             data = {
                 'analysis_time': datetime.now().isoformat(),
@@ -373,10 +386,11 @@ class SilverCorrelationAnalyzer:
                     'end_time': result.end_time.isoformat()
                 })
             
-            with open(filename, 'w', encoding='utf-8') as f:
+            with open(filepath, 'w', encoding='utf-8') as f:
                 json.dump(data, f, indent=2, ensure_ascii=False)
             
-            logger.info(f"结果已保存到 {filename}")
+            logger.info(f"结果已保存到 {filepath}")
+            print(f"💾 结果已保存到: {filepath}")
             
         except Exception as e:
             logger.error(f"保存结果失败: {e}")

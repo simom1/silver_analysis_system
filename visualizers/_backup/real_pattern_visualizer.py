@@ -13,9 +13,21 @@ from typing import Dict, List, Tuple, Optional
 import logging
 from dataclasses import dataclass
 import json
+import sys
+import os
 
-# 导入数据管理器
-from silver_data_manager import DataManager
+# 添加父目录到路径
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+# 导入数据管理器 - 支持多种导入方式
+try:
+    from ..core.silver_data_manager import DataManager
+except ImportError:
+    try:
+        sys.path.append(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'core'))
+        from silver_data_manager import DataManager
+    except ImportError:
+        from core.silver_data_manager import DataManager
 
 # 设置中文字体
 plt.rcParams['font.sans-serif'] = ['SimHei', 'Microsoft YaHei', 'Arial Unicode MS']
@@ -435,10 +447,16 @@ class RealPatternMatcher:
         
         plt.tight_layout()
         
+        # 确保 outputs 目录存在
+        output_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'outputs')
+        os.makedirs(output_dir, exist_ok=True)
+        
         # 保存图表
         if not save_path:
             timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-            save_path = f"real_pattern_comparison_{timestamp}.png"
+            save_path = os.path.join(output_dir, f"real_pattern_comparison_{timestamp}.png")
+        elif not os.path.isabs(save_path):
+            save_path = os.path.join(output_dir, save_path)
         
         plt.savefig(save_path, dpi=300, bbox_inches='tight')
         print(f"📊 真实形态对比图已保存: {save_path}")
